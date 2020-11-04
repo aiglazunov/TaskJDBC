@@ -17,7 +17,7 @@ public class Main {
     public static void main(String[] args) {
 
         UserService userService = new UserServiceImpl();
-        /*
+
         userService.createUsersTable();
         userService.saveUser("Ivan", "Ivanov", (byte) 19);
         userService.saveUser("Petr", "Petrov", (byte) 20);
@@ -27,9 +27,9 @@ public class Main {
             System.out.println(user);
         }
 
-         */
+
         //userService.dropUsersTable();
-        //userService.close();
+        userService.close();
 
 
         /*
