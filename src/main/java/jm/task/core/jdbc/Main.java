@@ -28,7 +28,7 @@ public class Main {
         userService.saveUser("Иван", "Иванов", (byte) 22);
         userService.removeUserById(2);
 
-        //userService.dropUsersTable();
+        userService.dropUsersTable();
 
         userService.getAllUsers().forEach(System.out::println);
 
