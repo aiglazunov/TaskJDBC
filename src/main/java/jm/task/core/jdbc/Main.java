@@ -1,21 +1,40 @@
 package jm.task.core.jdbc;
 
-import jm.task.core.jdbc.dao.UserDao;
-import jm.task.core.jdbc.dao.UserDaoJDBCImpl;
-import jm.task.core.jdbc.model.User;
+
 import jm.task.core.jdbc.service.UserService;
 import jm.task.core.jdbc.service.UserServiceImpl;
 import jm.task.core.jdbc.util.Util;
+import org.hibernate.SessionFactory;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.*;
 
 
 public class Main {
     public static void main(String[] args) {
 
+        /*
+        Map<String, Object> map = Util.getSessionFactory().getProperties();
+        map.entrySet().forEach(System.out::println);
+       */
+
+
+        UserService userService = new UserServiceImpl();
+        userService.createUsersTable();
+
+
+        userService.saveUser("Ivan", "Ivanov", (byte) 19);
+        userService.saveUser("Petr", "Petrov", (byte) 20);
+        userService.saveUser("Сидр", "Сидоров", (byte) 21);
+        userService.saveUser("Иван", "Иванов", (byte) 22);
+        userService.removeUserById(2);
+
+        //userService.dropUsersTable();
+
+        userService.getAllUsers().forEach(System.out::println);
+
+
+
+        /*
         UserService userService = new UserServiceImpl();
 
         userService.createUsersTable();
@@ -27,9 +46,12 @@ public class Main {
             System.out.println(user);
         }
 
-
+        userService.removeUserById((long)1);
+        //userService.cleanUsersTable();
         //userService.dropUsersTable();
         userService.close();
+        */
+
 
 
         /*

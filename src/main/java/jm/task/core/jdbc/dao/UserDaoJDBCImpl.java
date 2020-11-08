@@ -2,6 +2,7 @@ package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
+import org.hibernate.hql.internal.ast.SqlASTFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,8 +16,8 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     private ResultSet executeQuerySQL(String sql) {
-        ResultSet resultSet = null;
-        try  {
+        ResultSet resultSet;
+        try {
             Statement statement = connection.createStatement();
             resultSet = statement.executeQuery(sql);
             return resultSet;
@@ -29,8 +30,10 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     private int executeUpdateSQL(String sql) {
-        try (Statement statement = connection.createStatement()) {
-            return statement.executeUpdate(sql);
+        try (/*Statement statement = connection.createStatement()*/
+            PreparedStatement statement = connection.prepareStatement(sql)) {
+            /*return statement.executeUpdate(sql)*/
+              return statement.executeUpdate();
         } catch (SQLException ex) {
             close();
             System.out.println("ERROR in query execution");
@@ -73,26 +76,57 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void saveUser(String name, String lastName, byte age) {
+        /*
         String sql = "INSERT INTO USERS (name, lastname, age)" +
                 "\n VALUES (" + "'" + name + "', '" + lastName + "'" + ", " + age + ")";
         //System.out.println(sql);
         int result = executeUpdateSQL(sql);
-        if (result > 0) {
-            System.out.println("User c именем " + name + " добавлен в БД");
+        */
+        String sql = "INSERT INTO USERS (name, lastname, age)" +
+                "\n VALUES (?, ?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, lastName);
+            preparedStatement.setInt(3, age);
+            int result = preparedStatement.executeUpdate();
+            if (result > 0) {
+                System.out.println("User c именем " + name + " добавлен в БД");
+            } else {
+                System.out.println("User не добавлен");
+            }
+        } catch (SQLException ex) {
+            System.out.println("ERROR in query preparedStatement");
+            ex.getMessage();
+            close();
         }
-        else {
-            System.out.println("User не добавлен");
-        }
+
 
 
     }
 
     public void removeUserById(long id) {
+        /*
         String sql = "DELETE FROM USERS" +
                 "\n WHERE ID = " + id;
-        System.out.println(sql);
-        int result = executeUpdateSQL(sql);
-        System.out.println(result);
+                System.out.println(sql);
+         */
+        String sql = "DELETE FROM USERS WHERE ID = ?";
+
+        try (PreparedStatement statement = connection.prepareStatement(sql)){
+            statement.setLong(1,id);
+
+            int result = statement.executeUpdate();
+            if (result > 0) {
+                System.out.println("Удалено строк:" + result);
+            }
+
+        }
+        catch (SQLException ex) {
+            ex.getMessage();
+            System.out.println("ERROR in query preparedStatement");
+            close();
+        }
+
 
     }
 
