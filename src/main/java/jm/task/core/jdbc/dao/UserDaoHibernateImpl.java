@@ -3,21 +3,25 @@ package jm.task.core.jdbc.dao;
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 import org.hibernate.Session;
+
 import java.util.*;
 
 public class UserDaoHibernateImpl implements UserDao {
 
-    private static Session session;
+//    private static Session session;
+    private Session session;
 
     public UserDaoHibernateImpl() {
-        session = Util.getSessionFactory().openSession();
+//        session = Util.getSessionFactory().openSession();
     }
 
     private void executeUpdateSQL(String sql) {
         try {
+            session = Util.getSessionFactory().openSession();
             session.beginTransaction();
             session.createSQLQuery(sql).executeUpdate();
             session.getTransaction().commit();
+            session.close();
 
         } catch (Exception ex) {
             System.out.println("ERROR in query execution");
@@ -57,12 +61,15 @@ public class UserDaoHibernateImpl implements UserDao {
     public void saveUser(String name, String lastName, byte age) {
         try {
             User user = new User(name, lastName, age);
+            session = Util.getSessionFactory().openSession();
             session.beginTransaction();
             session.save(user);
             session.getTransaction().commit();
             System.out.println("User c именем " + name + " добавлен в БД");
+            session.close();
         } catch (Exception ex) {
             session.getTransaction().rollback();
+            session.close();
             ex.printStackTrace();
         }
     }
@@ -70,6 +77,7 @@ public class UserDaoHibernateImpl implements UserDao {
     @Override
     public void removeUserById(long id) {
         try {
+            session = Util.getSessionFactory().openSession();
             session.beginTransaction();
             User user = session.get(User.class, id); // null if no row found напрямую из базы
             //User user = session.load(User.class, id); //exception if no row found через Proxy
@@ -81,9 +89,11 @@ public class UserDaoHibernateImpl implements UserDao {
                 System.out.println("User " + id + " не существует");
             }
             session.getTransaction().commit();
+            session.close();
 
         } catch (Exception ex) {
             session.getTransaction().rollback();
+            session.close();
             ex.printStackTrace();
         }
     }
@@ -92,14 +102,16 @@ public class UserDaoHibernateImpl implements UserDao {
         public List<User> getAllUsers () {
             List<User> users = new ArrayList<>();
             try {
+                session = Util.getSessionFactory().openSession();
                 session.beginTransaction();
-
                 users = (List<User>) session.createQuery("From User").list();
                 session.getTransaction().commit();
+                session.close();
             }
             catch (Exception ex) {
                 ex.printStackTrace();
                 session.getTransaction().rollback();
+                session.close();
 
             }
             if (users.size() != 0) {

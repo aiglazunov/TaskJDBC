@@ -22,7 +22,7 @@ public class Util {
 
     public  static SessionFactory getSessionFactory() {
         try {
-            // Hibernate settings equivalent to hibernate.cfg.xml's properties
+            // Hibernate    settings equivalent to hibernate.cfg.xml's properties
             Configuration conf = new Configuration()
                     //.addClass(jm.task.core.jdbc.model.User.class)
                     .addAnnotatedClass(jm.task.core.jdbc.model.User.class)
@@ -38,8 +38,8 @@ public class Util {
 
 //            sessionFactory = conf.buildSessionFactory();
 
-            StandardServiceRegistryBuilder  serviceRegistry = new StandardServiceRegistryBuilder().applySettings(conf.getProperties());
-            sessionFactory = conf.buildSessionFactory(serviceRegistry.build());
+            StandardServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(conf.getProperties()).build();
+            sessionFactory = conf.buildSessionFactory(serviceRegistry);
             System.out.println("Connection OK!");
 
 

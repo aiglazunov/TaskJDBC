@@ -30,7 +30,7 @@ public class Main {
 
         userService.dropUsersTable();
 
-        userService.getAllUsers().forEach(System.out::println);
+        //userService.getAllUsers().forEach(System.out::println);
 
 
 
